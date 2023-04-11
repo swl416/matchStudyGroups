@@ -262,7 +262,7 @@ def matchAll(df,k,threshold,count):
     return MATCHES  
 
 pd.set_option('display.max_rows', None)
-myclient = pymongo.MongoClient("mongodb+srv://gm:tplySna2ZYaJbUif@cluster0.bbipje5.mongodb.net/groupMatch?ssl=true&ssl_cert_reqs=CERT_NONE&retryWrites=true&w=majority")
+myclient = pymongo.MongoClient("mongodb+srv://gm:tplySna2ZYaJbUif@cluster0.bbipje5.mongodb.net/groupMatch?retryWrites=true&w=majority")
 db = myclient["groupMatch"]
 df = pd.DataFrame()
 takesCol = db.takes
