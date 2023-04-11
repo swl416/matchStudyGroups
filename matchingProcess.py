@@ -262,7 +262,7 @@ def matchAll(df,k,threshold,count):
     return MATCHES  
 
 pd.set_option('display.max_rows', None)
-myclient = pymongo.MongoClient("mongodb+srv://gm:tplySna2ZYaJbUif@cluster0.bbipje5.mongodb.net/?retryWrites=true&w=majority&ssl=true&ssl_cert_reqs=CERT_NONE&tls=true")
+myclient = pymongo.MongoClient("mongodb+srv://gm:tplySna2ZYaJbUif@cluster0.bbipje5.mongodb.net/?retryWrites=true&w=majority")
 db = myclient["groupMatch"]
 df = pd.DataFrame()
 takesCol = db.takes
@@ -273,6 +273,7 @@ for s in ls:
         if cn != "EXAMINATION HOUR":
             df = df.append({"ID": s["_id"]["email"], "Student Name": s["studentName"],"Class Name": cn, "Days": days, "Sem": s["_id"]["semester"], "Class Time": dt, "Class Loc": loc}, ignore_index=True)
 print(df)
+
 
 dfNames = df['Class Name']
 dfLocs = df['Class Loc']
@@ -292,6 +293,8 @@ then to get the values from the specific row matches:
 matrix[5,67] -> 1.0
 matrix[5,43] -> .4102
 '''
+
+
 similarities = cosine_similarity(XNames)
 similarities_sparse = cosine_similarity(XNames,dense_output=False)
 ind = similarities_sparse[14].indices
