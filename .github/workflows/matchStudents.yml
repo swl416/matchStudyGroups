@@ -6,7 +6,8 @@ jobs:
     name: match students
     runs-on: ubuntu-latest
     steps:
+    - name: checkout
+      uses: actions/checkout@v2
     - name: run python script
-    - uses: actions/checkout@v2
-    - run: |
+      run: |
         python matchingProcess.py
