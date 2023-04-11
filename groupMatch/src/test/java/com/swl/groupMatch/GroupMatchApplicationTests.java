@@ -19,10 +19,6 @@ class GroupMatchApplicationTests {
 	@Autowired
 	private WebApplicationContext webApplicationContext;
 
-//	@Test
-//	void contextLoads() {
-//	}
-
 	private MockMvc mockMvc;
 	@BeforeEach
 	public void setup() throws Exception {

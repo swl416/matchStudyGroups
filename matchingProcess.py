@@ -262,7 +262,7 @@ def matchAll(df,k,threshold,count):
     return MATCHES  
 
 pd.set_option('display.max_rows', None)
-myclient = pymongo.MongoClient("mongodb+srv://gm:tplySna2ZYaJbUif@cluster0.bbipje5.mongodb.net/groupMatch?retryWrites=true&w=majority")
+myclient = pymongo.MongoClient("mongodb+srv://gm:tplySna2ZYaJbUif@cluster0.bbipje5.mongodb.net/?retryWrites=true&w=majority&ssl=true&ssl_cert_reqs=CERT_NONE&tls=true")
 db = myclient["groupMatch"]
 df = pd.DataFrame()
 takesCol = db.takes
@@ -295,13 +295,6 @@ matrix[5,43] -> .4102
 similarities = cosine_similarity(XNames)
 similarities_sparse = cosine_similarity(XNames,dense_output=False)
 ind = similarities_sparse[14].indices
-
-# ans = []
-# for i in ind:
-#     print(i)
-#     print(similarities_sparse[14,i])
-#     if similarities_sparse[14,i] >= 1:
-#         ans.append(i)
 
 tfIdfVectorizerLoc = TfidfVectorizer()
 XLoc = tfIdfVectorizerLoc.fit_transform(dfLocs)
