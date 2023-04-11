@@ -262,7 +262,7 @@ def matchAll(df,k,threshold,count):
     return MATCHES  
 
 pd.set_option('display.max_rows', None)
-myclient = pymongo.MongoClient("mongodb+srv://gm:tplySna2ZYaJbUif@cluster0.bbipje5.mongodb.net/groupMatch?retryWrites=true&w=majority")
+myclient = pymongo.MongoClient("mongodb+srv://gm:tplySna2ZYaJbUif@cluster0.bbipje5.mongodb.net/groupMatch?retryWrites=true&w=majority&tls=true")
 db = myclient["groupMatch"]
 df = pd.DataFrame()
 takesCol = db.takes
@@ -296,18 +296,10 @@ similarities = cosine_similarity(XNames)
 similarities_sparse = cosine_similarity(XNames,dense_output=False)
 ind = similarities_sparse[14].indices
 
-# ans = []
-# for i in ind:
-#     print(i)
-#     print(similarities_sparse[14,i])
-#     if similarities_sparse[14,i] >= 1:
-#         ans.append(i)
-
 tfIdfVectorizerLoc = TfidfVectorizer()
 XLoc = tfIdfVectorizerLoc.fit_transform(dfLocs)
 similarities = cosine_similarity(XLoc)
 similarities_sparse = cosine_similarity(XLoc,dense_output=False)
-
 
 tfIdfVectorizerTimes = TfidfVectorizer()
 XTimes = tfIdfVectorizerTimes.fit_transform(dfTimes)
@@ -321,7 +313,6 @@ similarities_sparse = cosine_similarity(XDays,dense_output=False)
 
 allGroups = matchAll(df,5,1,1)
 groupsCol = db["groups"]
-#groupsDf = pd.DataFrame(list(groupsCol.find()))
 for g in allGroups:
     q = { "groupName": g["_id"]["groupName"] }
     if db.mycollection.count_documents(q) == 0:
