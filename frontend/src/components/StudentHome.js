@@ -33,7 +33,7 @@ const StudentHome = () => {
             <Link to="/uploadCal">Upload Calendar</Link><br/>
             <Link to="/viewCourses">View Courses</Link><br/>
             <Link to="/viewGroups">View Groups</Link><br/>
-
+            <Link to="/delCal">Delete Course Schedule</Link><br/>
         </div>
     )
 }

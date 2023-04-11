@@ -43,6 +43,7 @@ const ViewGroups = () => {
     return (
         <div className = "main">
             <Link to="/">Home</Link><br/>
+            <h2>View Courses</h2>
             <JsonToTable json = {courses}></JsonToTable>
         </div>
     )

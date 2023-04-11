@@ -14,6 +14,8 @@ import SearchCourse from "./components/SearchCourse";
 import SearchStudent from "./components/SearchStudent";
 import AddGroup from "./components/AddGroup";
 import UpdateGroup from "./components/UpdateGroup";
+import DeleteCal from "./components/DeleteCal";
+import DeleteGroup from "./components/DeleteGroup";
  
 function App() {
   return (
@@ -37,6 +39,8 @@ function App() {
             <Route exact path="/searchStudent" element={<SearchStudent />}></Route>
             <Route exact path="/addGroup" element={<AddGroup />}></Route>
             <Route exact path="/updateGroup" element={<UpdateGroup />}></Route>
+            <Route exact path="/delCal" element={<DeleteCal />}></Route>
+            <Route exact path="/delGroup" element={<DeleteGroup />}></Route>
 
           </Routes>
         </div>

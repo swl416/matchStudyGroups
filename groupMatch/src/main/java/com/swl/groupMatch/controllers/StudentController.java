@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.swl.groupMatch.documents.Admin;
 import com.swl.groupMatch.documents.Group;
 import com.swl.groupMatch.documents.Student;
 import com.swl.groupMatch.documents.Takes;
@@ -44,7 +45,14 @@ public class StudentController {
     public ResponseEntity<?> getStudentByEmail(@PathVariable("email") String email) {
         LOGGER.info("getStudentByEmail");
         Student student = studentRepo.findStudentByEmail(email);
-        return new ResponseEntity<>(student.toString(), HttpStatus.OK);
+        if (student != null) {
+            return new ResponseEntity<>(student.toString(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(
+                    "student with email does not exist",
+                    HttpStatus.BAD_REQUEST
+            );
+        }
     }
 
     @GetMapping("/auth/{email}/{pw}")
@@ -60,6 +68,47 @@ public class StudentController {
                     "invalid email or password",
                     HttpStatus.BAD_REQUEST
             );
+        }
+    }
+
+    @PostMapping("/register/{email}/{name}/{pw}")
+    public ResponseEntity<?> registerStudent(@PathVariable("email") String email, @PathVariable("name") String name, @PathVariable("pw") String pw) {
+        Student student = studentRepo.findStudentByEmail(email);
+        //LOGGER.info("reg " + String.valueOf(student == null));
+        if (student != null) {
+            LOGGER.info("student with same email already exists " + email);
+            return new ResponseEntity<>(
+                    "student with same email already exists",
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+        else {
+            studentRepo.insert(new Student(new StudentId(email), name, pw));
+            return new ResponseEntity<>("successfully registered", HttpStatus.CREATED);
+        }
+    }
+
+    @DeleteMapping("/del/{email}/{pw}")
+    public ResponseEntity<?> delStudent(@PathVariable("email") String email, @PathVariable("pw") String pw) {
+        Student student = studentRepo.findStudentByEmail(email);
+        //LOGGER.info("del " + String.valueOf(student == null));
+        if (student == null) {
+            LOGGER.info("student with email does not exist");
+            return new ResponseEntity<>(
+                    "student with email does not exist",
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+        else {
+            // TODO: delete documents containing student in groups collection?
+            List<Takes> takes = takesRepo.findStudentTakes(email);
+            if (takes != null) {
+                for (Takes t: takes) {
+                    takesRepo.delete(t);
+                }
+            }
+            studentRepo.delete(student);
+            return new ResponseEntity<>("successfully deleted account of " + email, HttpStatus.OK);
         }
     }
 
@@ -108,12 +157,12 @@ public class StudentController {
                 takesMap.put("Courses", t.getCourses());
                 takesList.add(takesMap);
             }
-            LOGGER.info(email + " courses: ");
+            LOGGER.info(email + " courses");
 
             ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
             try {
                 String takesJson = ow.writeValueAsString(takesList);
-                LOGGER.info(takesJson);
+                //LOGGER.info(takesJson);
                 return new ResponseEntity<>(takesJson, HttpStatus.OK);
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
@@ -130,25 +179,18 @@ public class StudentController {
         }
     }
 
-    @PostMapping("/register/{email}/{name}/{pw}")
-    public ResponseEntity<?> registerStudent(@PathVariable("email") String email, @PathVariable("name") String name, @PathVariable("pw") String pw) {
-        Student student = studentRepo.findStudentByEmail(email);
-        if (student != null) {
-            return new ResponseEntity<>(
-                    "student with same email already exists",
-                    HttpStatus.BAD_REQUEST
-            );
+    @DeleteMapping(value="/delCal/{email}/{sem}")
+    public ResponseEntity<?> delCal(@PathVariable("email") String email, @PathVariable("sem") String sem){
+        LOGGER.info("delCal " + email + " " + sem);
+        // TODO: check if groups not matched before deleting takes
+        Takes takes = takesRepo.findTakesWithTakesId(email, sem);
+        if (takes != null) {
+            takesRepo.delete(takes);
+            return new ResponseEntity<>("successfully deleted course schedule for " + sem, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("course schedule not found for " + sem, HttpStatus.BAD_REQUEST);
         }
-        else {
-            studentRepo.insert(new Student(new StudentId(email), name, pw));
-            return new ResponseEntity<>("successfully registered", HttpStatus.CREATED);
-        }
-    }
 
-    @GetMapping("/")
-    public ResponseEntity<?> getCal() {
-        LOGGER.info("getCal");
-        return new ResponseEntity<>("cal", HttpStatus.CREATED);
     }
 
     @PostMapping(value="/uploadCal", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -157,6 +199,7 @@ public class StudentController {
         List<Map<String, String>> courses = parseCal(file);
         if (courses != null && courses.size() > 0) {
             String studentName = studentRepo.findStudentByEmail(email).getStudentName();
+            if (studentName == null) return new ResponseEntity<>("no student account registered with email", HttpStatus.BAD_REQUEST);
             Takes takes = new Takes(new TakesId(email, courses.get(0).get("startDT").substring(0,7)), studentName, courses);
             takesRepo.insert(takes);
             return new ResponseEntity<>("successfully uploaded", HttpStatus.CREATED);

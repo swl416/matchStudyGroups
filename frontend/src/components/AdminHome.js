@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react'
 import axios from "axios";
 import { Link } from "react-router-dom";
-import moment from 'moment';
 import Cookies from 'js-cookie';
-import { JsonToTable } from "react-json-to-table";
 
 const AdminHome = () => {
     useEffect(() => {
@@ -37,9 +35,11 @@ const AdminHome = () => {
             <br/>
             <Link to="/searchCourse" >Search Course</Link>
             <br/>
-            <Link to="/addGroup" >Add Group</Link>
+            {/* <Link to="/addGroup" >Add Group</Link>
             <br/>
             <Link to="/updateGroup" >Update Group</Link>
+            <br/> */}
+            <Link to="/delGroup" >Delete Group</Link>
 
         </div>
     )
