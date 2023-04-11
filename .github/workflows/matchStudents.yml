@@ -2,9 +2,16 @@ on:
   workflow_dispatch:
    
 jobs:
+  checkout:
+    name: access files from repo
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout
+    - uses: actions/checkout@v2
   match:
     name: match students
     runs-on: ubuntu-latest
     steps:
     - name: run python script
-      run: python matchingProcess.py
+      run: |
+        python matchingProcess.py
