@@ -301,7 +301,6 @@ XLoc = tfIdfVectorizerLoc.fit_transform(dfLocs)
 similarities = cosine_similarity(XLoc)
 similarities_sparse = cosine_similarity(XLoc,dense_output=False)
 
-
 tfIdfVectorizerTimes = TfidfVectorizer()
 XTimes = tfIdfVectorizerTimes.fit_transform(dfTimes)
 similarities = cosine_similarity(XTimes)
@@ -314,7 +313,6 @@ similarities_sparse = cosine_similarity(XDays,dense_output=False)
 
 allGroups = matchAll(df,5,1,1)
 groupsCol = db["groups"]
-#groupsDf = pd.DataFrame(list(groupsCol.find()))
 for g in allGroups:
     q = { "groupName": g["_id"]["groupName"] }
     if db.mycollection.count_documents(q) == 0:
