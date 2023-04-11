@@ -6,6 +6,17 @@ jobs:
     name: match students
     runs-on: ubuntu-latest
     steps:
+    - name: install python
+      run: |
+        sudo apt install python3
+        python --version
+    - name: install python dependencies
+      run: |
+        pip3 install pandas
+        pip3 install numpy
+        pip3 install sklearn
+        pip3 install scipy
+        pip3 install pymongo
     - name: checkout
       uses: actions/checkout@v2
     - name: run python script
