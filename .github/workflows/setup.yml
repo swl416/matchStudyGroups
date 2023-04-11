@@ -1,0 +1,20 @@
+on:
+  workflow_dispatch:
+
+jobs:
+  install:
+    name: install dependencies
+    runs-on: ubuntu-18.04
+    steps:
+    - name: install python
+      run: |
+        sudo apt install python3.10
+        python --version
+    - name: python dependencies
+      run: |
+        pip3 install pandas
+        pip3 install numpy
+        pip3 install sklearn
+        pip3 install scipy
+        pip3 install collections
+        pip3 install pymongo
