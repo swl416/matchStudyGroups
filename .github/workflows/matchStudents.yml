@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: checkout
-    - uses: actions/checkout@v2
+      uses: actions/checkout@v2
   match:
     name: match students
     runs-on: ubuntu-latest
