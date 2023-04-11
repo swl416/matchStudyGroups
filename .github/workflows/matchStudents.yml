@@ -1,0 +1,10 @@
+on:
+  workflow_dispatch:
+   
+jobs:
+  match:
+    name: match students
+    runs-on: ubuntu-latest
+    steps:
+    - name: run python script
+      run: python matchingProcess.py
