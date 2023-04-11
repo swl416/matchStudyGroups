@@ -4,7 +4,7 @@ on:
 jobs:
   install:
     name: install dependencies
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
     - name: install python
       run: |
