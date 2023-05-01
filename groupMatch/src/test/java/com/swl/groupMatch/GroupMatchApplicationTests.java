@@ -63,15 +63,15 @@ class GroupMatchApplicationTests {
 	@Test
 	public void registerStudent_newValidStudent() throws Exception {
 		mockMvc.perform(post("/student/register/{email}/{name}/{pw}", "newValidEmail@nyu.edu", "New Student", "newstudentpassword")).andExpect(status().isCreated());
-	}
-
-	@Test
-	public void registerStudent_existingStudent() throws Exception {
+		// authStudent_validEmail
+		mockMvc.perform(get("/student/auth/{email}/{pw}", "newValidEmail@nyu.edu", "newstudentpassword")).andExpect(status().isOk());
+		// registerStudent_existingStudent
 		mockMvc.perform(post("/student/register/{email}/{name}/{pw}", "newValidEmail@nyu.edu", "New Student", "newstudentpassword")).andExpect(status().isBadRequest());
-	}
-
-	@Test
-	public void delStudent_validStudent() throws Exception {
+		// viewGroups_validEmail_noGroups
+		mockMvc.perform(get("/student/viewGroups/{email}", "newValidEmail@nyu.edu")).andExpect(status().isBadRequest());
+		// viewCourses_validEmail_noCourses
+		mockMvc.perform(get("/student/viewCourses/{email}", "newValidEmail@nyu.edu")).andExpect(status().isBadRequest());
+		// delStudent_validStudent
 		mockMvc.perform(delete("/student/del/{email}/{pw}", "newValidEmail@nyu.edu","newstudentpassword")).andExpect(status().isOk());
 	}
 
@@ -103,16 +103,36 @@ class GroupMatchApplicationTests {
 	@Test
 	public void registerAdmin_newValidAdmin() throws Exception {
 		mockMvc.perform(post("/admin/register/{user}/{name}/{pw}", "newValidAdmin", "New Admin", "newadminpassword")).andExpect(status().isCreated());
+		// registerAdmin_existingAdmin
+		mockMvc.perform(post("/admin/register/{user}/{name}/{pw}", "newValidAdmin", "New Admin", "newadminpassword")).andExpect(status().isBadRequest());
+		// authAdmin_validAdmin
+		mockMvc.perform(get("/admin/auth/{user}/{pw}", "newValidAdmin","newadminpassword")).andExpect(status().isOk());
+		// delAdmin_validAdmin
+		mockMvc.perform(delete("/admin/del/{user}/{pw}", "newValidAdmin","newadminpassword")).andExpect(status().isOk());
 	}
 
 	@Test
-	public void delAdmin_validAdmin() throws Exception {
-		mockMvc.perform(delete("/admin/del/{user}/{pw}", "newValidAdmin","newadminpassword")).andExpect(status().isOk());
+	public void authAdmin_invalidAdmin() throws Exception {
+		mockMvc.perform(get("/admin/auth/{user}/{pw}", "invalidAdmin","invalidadminpassword")).andExpect(status().isBadRequest());
 	}
 
 	@Test
 	public void delAdmin_invalidAdmin() throws Exception {
 		mockMvc.perform(delete("/admin/del/{user}/{pw}", "invalidAdmin","invalidadminpassword")).andExpect(status().isBadRequest());
+	}
+
+	@Test
+	public void searchGroup_invalidGroup() throws Exception {
+		mockMvc.perform(get("/admin/searchGroup/{groupName}/{sem}", "invalidGroupName", "invalidSem")).andExpect(status().isBadRequest());
+	}
+
+	@Test
+	public void delGroup_invalidGroup() throws Exception {
+		mockMvc.perform(delete("/admin/delGroup/{groupName}/{sem}", "invalidGroupName", "invalidSem")).andExpect(status().isBadRequest());
+	}
+	@Test
+	public void searchCourse_invalidCourse() throws Exception {
+		mockMvc.perform(get("/admin/searchCourse/{courseName}/{startDT}/{days}/{loc}", "invalidCourseName", "invalidStartDT", "invalidDays", "invalidLoc")).andExpect(status().isBadRequest());
 	}
 
 }

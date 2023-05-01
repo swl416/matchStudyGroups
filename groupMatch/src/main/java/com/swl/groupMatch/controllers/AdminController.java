@@ -89,15 +89,25 @@ public class AdminController {
     public ResponseEntity<?> searchGroup(@PathVariable("groupName") String groupName, @PathVariable("sem") String sem) {
         Group group = groupRepo.searchGroup(groupName, sem);
         ObjectWriter ow = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL).writer().withDefaultPrettyPrinter();
-        try {
-            String groupJson = ow.writeValueAsString(group);
-            LOGGER.info(groupJson);
-            return new ResponseEntity<>(groupJson, HttpStatus.OK);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            LOGGER.info(e.toString());
-            return new ResponseEntity<>("no courses", HttpStatus.BAD_REQUEST);
+        if (group != null) {
+            try {
+                String groupJson = ow.writeValueAsString(group);
+                LOGGER.info(groupJson);
+                return new ResponseEntity<>(groupJson, HttpStatus.OK);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                LOGGER.info(e.toString());
+                return new ResponseEntity<>("invalid group", HttpStatus.BAD_REQUEST);
+            }
+        } else {
+            LOGGER.info("invalid group");
+            return new ResponseEntity<>(
+                    "invalid group",
+                    HttpStatus.BAD_REQUEST
+            );
         }
+
+
     }
 
 //    @PostMapping("/addGroup/{groupName}/{sem}")
@@ -142,15 +152,24 @@ public class AdminController {
     public ResponseEntity<?> searchCourse(@PathVariable("courseName") String courseName, @PathVariable("startDT") String startDT,
                                           @PathVariable("days") String days, @PathVariable("loc") String loc) {
         List<Object> resp = takesRepo.findAllStudentsOfCourse(loc, courseName, startDT, days);
-        ObjectWriter ow = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL).writer().withDefaultPrettyPrinter();
-        try {
-            String respJson = ow.writeValueAsString(resp);
-            LOGGER.info(respJson);
-            return new ResponseEntity<>(respJson, HttpStatus.OK);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            LOGGER.info(e.toString());
-            return new ResponseEntity<>("no courses", HttpStatus.BAD_REQUEST);
+        if (resp != null && resp.size() > 0) {
+            ObjectWriter ow = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL).writer().withDefaultPrettyPrinter();
+            try {
+                String respJson = ow.writeValueAsString(resp);
+                LOGGER.info(respJson);
+                return new ResponseEntity<>(respJson, HttpStatus.OK);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                LOGGER.info(e.toString());
+                return new ResponseEntity<>("invalid course", HttpStatus.BAD_REQUEST);
+            }
+        } else {
+            LOGGER.info("invalid course");
+            return new ResponseEntity<>(
+                    "invalid course",
+                    HttpStatus.BAD_REQUEST
+            );
         }
+
     }
 }
